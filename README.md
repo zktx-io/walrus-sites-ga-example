@@ -58,6 +58,9 @@ package: 0x514cf7ce2df33b9e2ca69e75bc9645ef38aca67b6f2852992a34e35e9f907f58
 
 ### Vars
 
+<img width="800" alt="vars" src="https://github.com/user-attachments/assets/acf8267d-21a6-4140-9e3d-b918df599fc5">
 
 ### Secrets
+
+<img width="800" alt="secrets" src="https://github.com/user-attachments/assets/6eae9607-fe4f-4ffa-9e65-47ad5f60ecc8">
 
