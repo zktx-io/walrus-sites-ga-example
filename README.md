@@ -43,9 +43,8 @@ jobs:
 
 ### Vars
 
-<img width="800" alt="vars" src="https://github.com/user-attachments/assets/acf8267d-21a6-4140-9e3d-b918df599fc5">
+<img width="805" alt="vars" src="https://github.com/user-attachments/assets/bd04a60a-705d-446a-9349-fb6b33277191">
 
 ### Secrets
 
-<img width="800" alt="secrets" src="https://github.com/user-attachments/assets/6eae9607-fe4f-4ffa-9e65-47ad5f60ecc8">
-
+<img width="790" alt="secrets" src="https://github.com/user-attachments/assets/304f024f-59e7-468a-a4c3-1b3b9cd3d1f4">
