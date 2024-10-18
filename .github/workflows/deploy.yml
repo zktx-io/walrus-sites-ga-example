@@ -1,4 +1,4 @@
-name: Deploy Walrus Site using Walrus Sites GA
+name: Update Walrus Site using Walrus Sites GA
 
 on:
   push:
@@ -29,6 +29,7 @@ jobs:
         with:
           site-path: './build'
           network: 'testnet'
+          obejct-id: '0x1a64a12447b5581ba4dd40cb0cd8f9bb485a7db3b42789158e467e5e5c531af8'
         env:
           SUI_ADDRESS: ${{ vars.SUI_ADDRESS }}
           SUI_KEYSTORE: ${{ secrets.SUI_KEYSTORE }}
