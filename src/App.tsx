@@ -27,6 +27,15 @@ function App() {
           >
             Walrus Sites GA
           </a>
+          &nbsp;
+          <a
+            className="App-link"
+            href="https://github.com/zktx-io/walrus-sites-ga-example"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Example
+          </a>
         </span>
       </header>
     </div>
