@@ -30,7 +30,7 @@ jobs:
         run: npm run build
 
       - name: Deploy site to Walrus
-        uses: zktx-io/walrus-sites-ga@v0.1.1
+        uses: zktx-io/walrus-sites-ga@vlatest
         with:
           site-path: './build'
           network: 'testnet'
