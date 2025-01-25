@@ -25,12 +25,13 @@ jobs:
         run: npm run build
 
       - name: Deploy site to Walrus
-        uses: zktx-io/walrus-sites-ga@v0.2.15
+        uses: zktx-io/walrus-sites-ga@v0.3.1
         with:
           site-path: './build'
           network: 'testnet'
           epochs: 100
           object-id: '0x1a64a12447b5581ba4dd40cb0cd8f9bb485a7db3b42789158e467e5e5c531af8'
+          wal-exchange-enabled: false
         env:
           SUI_ADDRESS: ${{ vars.SUI_ADDRESS }}
           SUI_KEYSTORE: ${{ secrets.SUI_KEYSTORE }}
