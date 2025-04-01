@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         <img src="/walrus-testnet.png" className="App-logo" alt="logo" />
         <p>
-          Walrus Sites GA Example
+          Walrus Sites GA Example !
         </p>
         <span>
           <a
