@@ -24,10 +24,12 @@ jobs:
       - name: Build React app
         run: npm run build
 
+      - name: Check build folder contents
+        run: ls -al ./build
+
       - name: Walrus Sites Provenance
         uses: zktx-io/walrus-sites-provenance@v0.0.2
         with:
           config-path: './site.config.json'
         env:
           WALRUS_KEYPAIR: ${{ secrets.WALRUS_KEYPAIR }}
-          
