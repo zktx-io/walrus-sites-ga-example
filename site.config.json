@@ -1,0 +1,16 @@
+{
+  "network": "testnet",
+  "owner": "0xea016e020478a34bdb8e2a8400166e5d54a4132e747bf085c37ca71f3d46e3a0",
+  "site_name": "Walrus Sites Provenance Demo",
+  "metadata": {
+    "link": "",
+    "image_url": "https://www.walrus.xyz/walrus-site",
+    "name": "Demo",
+    "description": "A decentralized web app deployed on Walrus.",
+    "project_url": "",
+    "creator": "creator"
+  },
+  "epochs": 2,
+  "path": "./build",
+  "gas_budget": 100000000
+}

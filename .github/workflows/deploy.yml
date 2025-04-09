@@ -24,13 +24,10 @@ jobs:
       - name: Build React app
         run: npm run build
 
-      - name: Deploy site to Walrus
-        uses: zktx-io/walrus-sites-ga@v0.3.8
+      - name: Walrus Sites Provenance
+        uses: zktx-io/walrus-sites-provenance@v0.0.2
         with:
-          site-path: './build'
-          network: 'testnet'
-          epochs: 50
-          wal-exchange-enabled: true
+          config-path: './site.config.json'
         env:
-          SUI_ADDRESS: ${{ vars.SUI_ADDRESS }}
-          SUI_KEYSTORE: ${{ secrets.SUI_KEYSTORE }}
+          WALRUS_KEYPAIR: ${{ secrets.WALRUS_KEYPAIR }}
+          
