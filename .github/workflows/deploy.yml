@@ -29,4 +29,4 @@ jobs:
         with:
           config-path: './site.config.json'
         env:
-          WALRUS_KEYPAIR: ${{ secrets.WALRUS_KEYPAIR }}
+          WALRUS_KEYPAIR: ${{ secrets.ED25519_PRIVATE_KEY }}
