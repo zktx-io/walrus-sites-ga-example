@@ -25,7 +25,7 @@ jobs:
         run: npm run build
 
       - name: Walrus Sites Provenance
-        uses: zktx-io/walrus-sites-provenance@v0.0.10
+        uses: zktx-io/walrus-sites-provenance@v0.0.11
         with:
           config-path: './site.config.json'
         env:
