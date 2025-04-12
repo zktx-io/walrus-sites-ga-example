@@ -52,6 +52,7 @@ jobs:
           echo "dummy provenance content" > site-provenance.intoto.jsonl
           HASHES=$(jq -r '[.resources[] | "\(.blob_hash)  \(.path)" ] | join("\n")' site_manifest.json | sha256sum | base64 -w0)
           echo "base64_hashes=$HASHES" >> "$GITHUB_OUTPUT"
+          ls
 
       - name: Upload site manifest and output directory
         uses: actions/upload-artifact@v4
