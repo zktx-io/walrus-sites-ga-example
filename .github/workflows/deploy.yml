@@ -113,10 +113,5 @@ jobs:
           cp site_manifest.json ${{ needs.build-site.outputs.output_dir }}/.well-known/
           cp site-provenance.intoto.jsonl ${{ needs.build-site.outputs.output_dir }}/.well-known/
           ls
-
-      - name: Deploy to Walrus Sites
-        uses: zktx-io/walrus-sites-provenance@v0.1.0
-        with:
-          config-path: ./site.config.json
-        env:
-          ED25519_PRIVATE_KEY: ${{ secrets.ED25519_PRIVATE_KEY }}
+          echo "Output dir: ${{ needs.build-site.outputs.output_dir }}"
+          ls -R ${{ needs.build-site.outputs.output_dir }}
