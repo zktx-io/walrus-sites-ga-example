@@ -8,25 +8,62 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      actions: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-  
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
+      - name: Parse config
+        id: parse
+        run: |
+          CONFIG_PATH="./site.config.json"
+          OUTPUT_DIR=$(jq -r '.outputDir // "dist"' "$CONFIG_PATH")
+          echo "output_dir=$OUTPUT_DIR" >> "$GITHUB_OUTPUT"
+
+      - name: Fail if output folder exists
+        run: |
+          if [ -d "${{ steps.parse.outputs.output_dir }}" ]; then
+            echo "Output folder ${{ steps.parse.outputs.output_dir }} already exists. Please delete it before running this workflow."
+            exit 1
+          fi
+
       - name: Install dependencies
         run: npm install
 
-      - name: Build React app
+      - name: Build site
         run: npm run build
 
-      - name: Walrus Sites Provenance
-        uses: zktx-io/walrus-sites-provenance@v0.0.11
+      - name: Generate site manifest (dummy hashes)
+        id: generate-manifest
+        run: |
+          echo '{"resources":[{"path":"/index.html","blob_id":"dummy-blob-id","blob_hash":"dummy-hash"}]}' > site_manifest.json
+          HASHES=$(jq -r '[.resources[] | "\(.blob_hash)  \(.path)" ] | join("\n")' site_manifest.json | sha256sum | base64 -w0)
+          echo "base64_hashes=$HASHES" >> "$GITHUB_OUTPUT"
+
+      - name: Generate provenance
+        uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0
         with:
-          config-path: './site.config.json'
+          base64-subjects: ${{ steps.generate-manifest.outputs.base64_hashes }}
+          upload-assets: false
+          provenance-name: "site-provenance.intoto.jsonl"
+
+      - name: Copy site_manifest and provenance to output
+        run: |
+          cp site_manifest.json ${{ steps.parse.outputs.output_dir }}/
+          cp site-provenance.intoto.jsonl ${{ steps.parse.outputs.output_dir }}/
+
+      - name: Deploy to Walrus Sites
+        uses: zktx-io/walrus-sites-provenance@v0.0.12
+        with:
+          config-path: ./site.config.json
         env:
           ED25519_PRIVATE_KEY: ${{ secrets.ED25519_PRIVATE_KEY }}
