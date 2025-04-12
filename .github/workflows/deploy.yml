@@ -29,7 +29,7 @@ jobs:
         id: parse
         run: |
           CONFIG_PATH="./site.config.json"
-          OUTPUT_DIR=$(jq -r '.outputDir // "dist"' "$CONFIG_PATH")
+          OUTPUT_DIR=$(jq -r 'if has("path") then .path else error("Missing required field: path") end' "$CONFIG_PATH")
           echo "output_dir=$OUTPUT_DIR" >> "$GITHUB_OUTPUT"
 
       - name: Fail if output folder exists
