@@ -52,6 +52,12 @@ jobs:
           HASHES=$(jq -r '[.resources[] | "\(.blob_hash)  \(.path)" ] | join("\n")' site_manifest.json | sha256sum | base64 -w0)
           echo "base64_hashes=$HASHES" >> "$GITHUB_OUTPUT"
 
+      - name: Upload site config
+        uses: actions/upload-artifact@v4
+        with:
+          name: site.config.json
+          path: site.config.json
+  
       - name: Upload site manifest
         uses: actions/upload-artifact@v4
         with:
@@ -85,6 +91,12 @@ jobs:
         with:
           name: site_manifest.json
 
+      - name: Download site config
+        uses: actions/download-artifact@v4
+        with:
+          name: site.config.json
+          path: site.config.json
+  
       - name: Download output directory
         uses: actions/download-artifact@v4
         with:
