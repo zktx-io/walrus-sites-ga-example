@@ -101,15 +101,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: site_manifest.json
-          path: ${{ needs.build-site.outputs.output_dir }}/.well-known/site_manifest.json
+          path: ${{ needs.build-site.outputs.output_dir }}/.well-known
 
       - name: Download provenance file
         uses: actions/download-artifact@v4
         with:
           name: site-provenance.intoto.jsonl
-          path: ${{ needs.build-site.outputs.output_dir }}/.well-known/site-provenance.intoto.jsonl
+          path: ${{ needs.build-site.outputs.output_dir }}/.well-known
 
       - name: List contents of output directory
         run: |
           echo "📂 Output directory: ${{ needs.build-site.outputs.output_dir }}"
-          ls -R ${{ needs.build-site.outputs.output_dir }}
+          ls -aR ${{ needs.build-site.outputs.output_dir }}
