@@ -13,6 +13,5 @@
   "epochs": 2,
   "path": "./build",
   "gas_budget": 100000000,
-  "write_retry_limit": 15,
-  "object_id": "0xace123e46df8bcc2d711692f2b7a1190dd3dd195e45fa54273828da18fe0f245"
+  "write_retry_limit": 15
 }
