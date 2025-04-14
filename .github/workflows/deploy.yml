@@ -17,20 +17,8 @@ jobs:
       base64_hashes: ${{ steps.generate-resources-hashes.outputs.base64_hashes }}
 
     steps:
-      - name: Create temporary directory
-        id: tmpdir
-        run: |
-          echo "dir=tmp/provenance-scripts" >> "$GITHUB_OUTPUT"
-
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Checkout provenance scripts
-        uses: actions/checkout@v4
-        with:
-          repository: zktx-io/walrus-sites-provenance
-          path: ${{ steps.tmpdir.outputs.dir }}
-          ref: v0.1.5
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
