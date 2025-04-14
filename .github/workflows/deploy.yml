@@ -103,49 +103,42 @@ jobs:
       contents: write
       actions: read
 
-  verification:
-    needs: [build-site, provenance]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download provenance file
-        uses: actions/download-artifact@v4
-        with:
-          name: walrus-sites.intoto.jsonl
-          path: .artifact
-
-      - name: Download site output files
-        uses: actions/download-artifact@v4
-        with:
-          name: site-output
-          path: ${{ needs.build-site.outputs.output_dir }}
-
-      - name: Install slsa-verifier
-        run: |
-          curl -sSfL https://github.com/slsa-framework/slsa-verifier/releases/latest/download/slsa-verifier-linux-amd64 -o slsa-verifier
-          chmod +x slsa-verifier
-          sudo mv slsa-verifier /usr/local/bin/
-
-      - name: Verify SLSA Provenance and Generate JSON Report
-        run: |
-          PROVENANCE_PATH=".artifact/walrus-sites.intoto.jsonl"
-          REPORT_PATH=".artifact/verify-report.json"
-          FILE_PATH="./build/static/js/main.059e4ff7.js.map"
-
-          slsa-verifier verify-artifact "$FILE_PATH" \
-            --provenance-path "$PROVENANCE_PATH" \
-            --source-uri github.com/zktx-io/walrus-sites-ga-example
-
-          echo "::group::🧾 slsa-verifier output"
-          echo "$OUTPUT"
-          echo "::endgroup::"
-
-          if [ $EXIT_CODE -ne 0 ]; then
-            echo "::error::❌ Verification failed for $FILE_PATH"
-            exit 1
-          fi
-
-      - name: Upload verification report
-        uses: actions/upload-artifact@v4
-        with:
-          name: verify-report.json
-          path: verify-report.json
+      verification:
+        needs: [build-site, provenance]
+        runs-on: ubuntu-latest
+        steps:
+          - name: Download provenance file
+            uses: actions/download-artifact@v4
+            with:
+              name: walrus-sites.intoto.jsonl
+              path: .artifact
+    
+          - name: Download site output files
+            uses: actions/download-artifact@v4
+            with:
+              name: site-output
+              path: ${{ needs.build-site.outputs.output_dir }}
+    
+          - name: Install slsa-verifier
+            run: |
+              curl -sSfL https://github.com/slsa-framework/slsa-verifier/releases/latest/download/slsa-verifier-linux-amd64 -o slsa-verifier
+              chmod +x slsa-verifier
+              sudo mv slsa-verifier /usr/local/bin/
+    
+          - name: Verify SLSA Provenance and Generate JSON Report
+            run: |
+              PROVENANCE_PATH=".artifact/walrus-sites.intoto.jsonl"
+              REPORT_PATH=".artifact/verify-report.json"
+    
+              while IFS= read -r -d '' file; do
+                echo "🔍 Verifying $file"
+                slsa-verifier verify-artifact "$file" \
+                  --provenance-path "$PROVENANCE_PATH" \
+                  --source-uri github.com/zktx-io/walrus-sites-ga-example || exit 1
+              done < <(find ${{ needs.build-site.outputs.output_dir }} -type f -print0)
+    
+          - name: Upload verification report
+            uses: actions/upload-artifact@v4
+            with:
+              name: verify-report.json
+              path: verify-report.json
