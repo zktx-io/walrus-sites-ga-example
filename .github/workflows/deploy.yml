@@ -168,6 +168,10 @@ jobs:
               --provenance-path "$PROVENANCE_PATH" \
               --source-uri github.com/${{ github.repository }} 2>&1)
 
+            echo "::group::🧾 slsa-verifier output"
+            echo "$OUTPUT"
+            echo "::endgroup::"
+
             PASSED=$(echo "$OUTPUT" | grep -q "PASSED" && echo true || echo false)
             BUILDER=$(echo "$OUTPUT" | grep "builder" | sed -E 's/.*builder (.*) at.*/\1/')
             COMMIT=$(echo "$OUTPUT" | grep "commit" | sed -E 's/.*commit ([a-f0-9]{7,}).*/\1/')
