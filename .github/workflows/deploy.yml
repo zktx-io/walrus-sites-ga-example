@@ -118,15 +118,29 @@ jobs:
           name: site-provenance.intoto.jsonl
           path: ${{ needs.build-site.outputs.output_dir }}/.well-known
 
+      - name: Download site output files
+        uses: actions/download-artifact@v4
+        with:
+          name: site-output
+          path: ${{ needs.build-site.outputs.output_dir }}
+
+      - name: Install slsa-verifier
+        run: |
+          curl -sSfL https://github.com/slsa-framework/slsa-verifier/releases/latest/download/slsa-verifier-linux-amd64 -o slsa-verifier
+          chmod +x slsa-verifier
+          sudo mv slsa-verifier /usr/local/bin/
+
       - name: Verify SLSA Provenance and Generate JSON Report
         run: |
-          npm install -g @slsa-framework/slsa-verifier
           MANIFEST_PATH="${{ needs.build-site.outputs.output_dir }}/.well-known/site_manifest.json"
           PROVENANCE_PATH="${{ needs.build-site.outputs.output_dir }}/.well-known/site-provenance.intoto.jsonl"
           REPORT_PATH="${{ needs.build-site.outputs.output_dir }}/.well-known/verify-report.json"
+
           echo "[" > "$REPORT_PATH"
+
           FILES=$(jq -r '.resources[] | .path' "$MANIFEST_PATH")
           FIRST=true
+
           for FILE in $FILES; do
             FILE_PATH="${{ needs.build-site.outputs.output_dir }}/$FILE"
             if [ ! -f "$FILE_PATH" ]; then
@@ -134,13 +148,14 @@ jobs:
               exit 1
             fi
 
+            echo "🔍 Verifying $FILE_PATH"
             OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
               --provenance-path "$PROVENANCE_PATH" \
               --source-uri github.com/${{ github.repository }} 2>&1)
-            
+
             PASSED=$(echo "$OUTPUT" | grep -q "PASSED" && echo true || echo false)
-            BUILDER=$(echo "$OUTPUT" | grep "builder" | sed -E 's/.*builder (.*) at.*/\1/')
-            COMMIT=$(echo "$OUTPUT" | grep "commit" | sed -E 's/.*commit ([a-f0-9]{7,}).*/\1/')
+            BUILDER=$(echo "$OUTPUT" | grep "builder" | sed -E 's/.*builder (.*) at.*/\\1/')
+            COMMIT=$(echo "$OUTPUT" | grep "commit" | sed -E 's/.*commit ([a-f0-9]{7,}).*/\\1/')
 
             if [ "$FIRST" = false ]; then
               echo "," >> "$REPORT_PATH"
@@ -153,12 +168,7 @@ jobs:
               --argjson passed "$PASSED" \
               --arg builder "$BUILDER" \
               --arg commit "$COMMIT" \
-              '{
-                file: $file,
-                passed: $passed,
-                builder: $builder,
-                commit: $commit
-              }' >> "$REPORT_PATH"
+              '{ file: $file, passed: $passed, builder: $builder, commit: $commit }' >> "$REPORT_PATH"
           done
 
           echo "]" >> "$REPORT_PATH"
@@ -168,37 +178,3 @@ jobs:
         with:
           name: verify-report.json
           path: ${{ needs.build-site.outputs.output_dir }}/.well-known/verify-report.json
-
-  deploy:
-    needs: [build-site, provenance]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download site config
-        uses: actions/download-artifact@v4
-        with:
-          name: site.config.json
-
-      - name: Download output directory
-        uses: actions/download-artifact@v4
-        with:
-          name: site-output
-          path: ${{ needs.build-site.outputs.output_dir }}
-
-      - name: Download site manifest
-        uses: actions/download-artifact@v4
-        with:
-          name: site_manifest.json
-          path: ${{ needs.build-site.outputs.output_dir }}/.well-known
-
-      - name: Download provenance file
-        uses: actions/download-artifact@v4
-        with:
-          name: site-provenance.intoto.jsonl
-          path: ${{ needs.build-site.outputs.output_dir }}/.well-known
-
-      - name: Deploy to Walrus Sites
-        uses: zktx-io/walrus-sites-provenance@v0.1.5
-        with:
-          config-path: ./site.config.json
-        env:
-          ED25519_PRIVATE_KEY: ${{ secrets.ED25519_PRIVATE_KEY }}
