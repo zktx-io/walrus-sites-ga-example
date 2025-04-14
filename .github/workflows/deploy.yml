@@ -142,7 +142,7 @@ jobs:
           slsa-verifier version
 
           jq '.resources[0].path' .artifact/site_manifest.json
-          ls -l ./build/...
+          ls -lR ./build/
 
           sha256sum ./build/static/js/main.059e4ff7.js.map
 
