@@ -139,6 +139,8 @@ jobs:
           FILE=$(jq -r '.resources[0].path' "$MANIFEST_PATH")
           FILE_PATH="./build/${FILE#/}"
 
+          slsa-verifier version
+
           echo "🔍 Verifying single file: $FILE_PATH"
           OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
             --provenance-path "$PROVENANCE_PATH" \
