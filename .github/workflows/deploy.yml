@@ -152,8 +152,8 @@ jobs:
           | base64 -d \
           | jq -r '.subject[].name'
 
-          echo "🔍 Verifying single file: $FILE_PATH"
-          slsa-verifier verify-artifact "$FILE_PATH" \
+          echo "🔍 Verifying single file: $MANIFEST_PATH"
+          slsa-verifier verify-artifact "$MANIFEST_PATH" \
             --provenance-path "$PROVENANCE_PATH" \
             --source-uri github.com/zktx-io/walrus-sites-ga-example
 
