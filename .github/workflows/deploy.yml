@@ -132,9 +132,9 @@ jobs:
 
       - name: Verify SLSA Provenance and Generate JSON Report
         run: |
-          MANIFEST_PATH="${{ needs.build-site.outputs.output_dir }}/.well-known/site_manifest.json"
-          PROVENANCE_PATH="${{ needs.build-site.outputs.output_dir }}/.well-known/site-provenance.intoto.jsonl"
-          REPORT_PATH="${{ needs.build-site.outputs.output_dir }}/.well-known/verify-report.json"
+          MANIFEST_PATH=".well-known/site_manifest.json"
+          PROVENANCE_PATH=".well-known/site-provenance.intoto.jsonl"
+          REPORT_PATH=".well-known/verify-report.json"
 
           echo "📄 MANIFEST_PATH: $MANIFEST_PATH"
           echo "📄 PROVENANCE_PATH: $PROVENANCE_PATH"
@@ -167,7 +167,6 @@ jobs:
             OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
               --provenance-path "$PROVENANCE_PATH" \
               --source-uri github.com/${{ github.repository }} 2>&1)
-
             echo "::group::🧾 slsa-verifier output"
             echo "$OUTPUT"
             echo "::endgroup::"
