@@ -141,18 +141,6 @@ jobs:
 
           slsa-verifier version
 
-          echo "1"
-          head -n 1 .artifact/site-provenance.intoto.jsonl \
-            | jq -r '.dsseEnvelope.payload' \
-            | base64 -d \
-            | jq -r '.subject[].name'
-
-          echo "2"
-          head -n 1 .artifact/site-provenance.intoto.jsonl | jq -r '.dsseEnvelope.payload' | base64 -d | jq '.subject[].name'
-
-          echo "3"
-          head -n 1 .artifact/site-provenance.intoto.jsonl | jq -r '.subject[].name'
-
           echo "🔍 Verifying single file: $FILE_PATH"
           slsa-verifier verify-artifact "$FILE_PATH" \
             --provenance-path "$PROVENANCE_PATH" \
