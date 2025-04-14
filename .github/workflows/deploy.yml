@@ -111,7 +111,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: walrus-sites.intoto.jsonl
-          path: .artifact
 
       - name: Download site output files
         uses: actions/download-artifact@v4
@@ -125,29 +124,19 @@ jobs:
           chmod +x slsa-verifier
           sudo mv slsa-verifier /usr/local/bin/
 
-      - name: Verify SLSA Provenance and Generate JSON Report
+      - name: Verify All Files via SLSA Provenance
         run: |
-          PROVENANCE_PATH=".artifact/walrus-sites.intoto.jsonl"
-          REPORT_PATH=".artifact/verify-report.json"
-          FILE_PATH="./build/static/js/main.059e4ff7.js.map"
-      
-          OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
-            --provenance-path "$PROVENANCE_PATH" \
-            --source-uri github.com/zktx-io/walrus-sites-ga-example || true)
-      
-          echo "::group::🧾 slsa-verifier output"
-          echo "$OUTPUT"
-          echo "::endgroup::"
-      
-          echo "$OUTPUT" > "$REPORT_PATH"
-      
-          if ! echo "$OUTPUT" | grep -q "PASSED"; then
-            echo "::error::❌ Verification failed for $FILE_PATH"
-            exit 1
-          fi
+          PROVENANCE_PATH="walrus-sites.intoto.jsonl"
+          OUTPUT_DIR="${{ needs.build-site.outputs.output_dir }}"
 
-      - name: Upload verification report
-        uses: actions/upload-artifact@v4
-        with:
-          name: verify-report.json
-          path: verify-report.json
+          while IFS= read -r -d '' file; do
+            REL_PATH="${file#${OUTPUT_DIR}/}"
+            echo "🔍 Verifying $REL_PATH..."
+            slsa-verifier verify-artifact "$file" \
+              --provenance-path "$PROVENANCE_PATH" \
+              --source-uri github.com/zktx-io/walrus-sites-ga-example \
+              &> /dev/null || {
+                echo "::error::❌ Verification failed for $REL_PATH"
+                exit 1
+              }
+          done < <(find "$OUTPUT_DIR" -type f -print0)
