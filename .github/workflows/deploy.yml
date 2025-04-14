@@ -102,6 +102,73 @@ jobs:
       contents: write
       actions: read
 
+  verification:
+    needs: [build-site, provenance]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download site manifest
+        uses: actions/download-artifact@v4
+        with:
+          name: site_manifest.json
+          path: ${{ needs.build-site.outputs.output_dir }}/.well-known
+
+      - name: Download provenance file
+        uses: actions/download-artifact@v4
+        with:
+          name: site-provenance.intoto.jsonl
+          path: ${{ needs.build-site.outputs.output_dir }}/.well-known
+
+      - name: Verify SLSA Provenance and Generate JSON Report
+        run: |
+          npm install -g @slsa-framework/slsa-verifier
+          MANIFEST_PATH="${{ needs.build-site.outputs.output_dir }}/.well-known/site_manifest.json"
+          PROVENANCE_PATH="${{ needs.build-site.outputs.output_dir }}/.well-known/site-provenance.intoto.jsonl"
+          REPORT_PATH="${{ needs.build-site.outputs.output_dir }}/.well-known/verify-report.json"
+          echo "[" > "$REPORT_PATH"
+          FILES=$(jq -r '.resources[] | .path' "$MANIFEST_PATH")
+          FIRST=true
+          for FILE in $FILES; do
+            FILE_PATH="${{ needs.build-site.outputs.output_dir }}/$FILE"
+            if [ ! -f "$FILE_PATH" ]; then
+              echo "❌ Missing file: $FILE"
+              exit 1
+            fi
+
+            OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
+              --provenance-path "$PROVENANCE_PATH" \
+              --source-uri github.com/${{ github.repository }} 2>&1)
+            
+            PASSED=$(echo "$OUTPUT" | grep -q "PASSED" && echo true || echo false)
+            BUILDER=$(echo "$OUTPUT" | grep "builder" | sed -E 's/.*builder (.*) at.*/\1/')
+            COMMIT=$(echo "$OUTPUT" | grep "commit" | sed -E 's/.*commit ([a-f0-9]{7,}).*/\1/')
+
+            if [ "$FIRST" = false ]; then
+              echo "," >> "$REPORT_PATH"
+            else
+              FIRST=false
+            fi
+
+            jq -n \
+              --arg file "$FILE" \
+              --argjson passed "$PASSED" \
+              --arg builder "$BUILDER" \
+              --arg commit "$COMMIT" \
+              '{
+                file: $file,
+                passed: $passed,
+                builder: $builder,
+                commit: $commit
+              }' >> "$REPORT_PATH"
+          done
+
+          echo "]" >> "$REPORT_PATH"
+
+      - name: Upload verification report
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-report.json
+          path: ${{ needs.build-site.outputs.output_dir }}/.well-known/verify-report.json
+
   deploy:
     needs: [build-site, provenance]
     runs-on: ubuntu-latest
