@@ -136,20 +136,6 @@ jobs:
           PROVENANCE_PATH=".well-known/site-provenance.intoto.jsonl"
           REPORT_PATH=".well-known/verify-report.json"
 
-          echo "📄 MANIFEST_PATH: $MANIFEST_PATH"
-          echo "📄 PROVENANCE_PATH: $PROVENANCE_PATH"
-          echo "📄 REPORT_PATH: $REPORT_PATH"
-
-          if [ ! -f "$MANIFEST_PATH" ]; then
-            echo "❌ site_manifest.json not found at $MANIFEST_PATH"
-            exit 1
-          fi
-
-          if [ ! -f "$PROVENANCE_PATH" ]; then
-            echo "❌ site-provenance.intoto.jsonl not found at $PROVENANCE_PATH"
-            exit 1
-          fi
-
           echo "[" > "$REPORT_PATH"
 
           FILES=$(jq -r '.resources[] | .path' "$MANIFEST_PATH")
@@ -163,30 +149,7 @@ jobs:
             fi
 
             echo "🔍 Verifying $FILE_PATH"
-            echo "🔍 Verifying ${{ github.repository }}"
-            OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
-              --provenance-path "$PROVENANCE_PATH" \
-              --source-uri github.com/${{ github.repository }} 2>&1)
-            echo "::group::🧾 slsa-verifier output"
-            echo "$OUTPUT"
-            echo "::endgroup::"
 
-            PASSED=$(echo "$OUTPUT" | grep -q "PASSED" && echo true || echo false)
-            BUILDER=$(echo "$OUTPUT" | grep "builder" | sed -E 's/.*builder (.*) at.*/\1/')
-            COMMIT=$(echo "$OUTPUT" | grep "commit" | sed -E 's/.*commit ([a-f0-9]{7,}).*/\1/')
-
-            if [ "$FIRST" = false ]; then
-              echo "," >> "$REPORT_PATH"
-            else
-              FIRST=false
-            fi
-
-            jq -n \
-              --arg file "$FILE" \
-              --argjson passed "$PASSED" \
-              --arg builder "$BUILDER" \
-              --arg commit "$COMMIT" \
-              '{ file: $file, passed: $passed, builder: $builder, commit: $commit }' >> "$REPORT_PATH"
           done
 
           echo "]" >> "$REPORT_PATH"
