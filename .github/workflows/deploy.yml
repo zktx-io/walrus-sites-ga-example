@@ -141,7 +141,7 @@ jobs:
       
           echo "$OUTPUT" > "$REPORT_PATH"
       
-          if ! echo "$OUTPUT" | grep -q "Verified"; then
+          if ! echo "$OUTPUT" | grep -q "PASSED"; then
             echo "::error::❌ Verification failed for $FILE_PATH"
             exit 1
           fi
