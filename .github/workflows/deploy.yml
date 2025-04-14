@@ -141,6 +141,11 @@ jobs:
 
           slsa-verifier version
 
+          jq '.resources[0].path' .artifact/site_manifest.json
+          ls -l ./build/...
+
+          sha256sum ./build/static/js/main.059e4ff7.js.map
+
           echo "🔍 Verifying single file: $FILE_PATH"
           slsa-verifier verify-artifact "$FILE_PATH" \
             --provenance-path "$PROVENANCE_PATH" \
