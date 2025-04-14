@@ -136,7 +136,7 @@ jobs:
           PROVENANCE_PATH=".artifact/site-provenance.intoto.jsonl"
           REPORT_PATH=".artifact/verify-report.json"
 
-          sha256sum ${ MANIFEST_PATH }
+          sha256sum $MANIFEST_PATH
 
           echo "🔍 Verifying site_manifest.json: $MANIFEST_PATH"
           slsa-verifier verify-artifact "$MANIFEST_PATH" \
