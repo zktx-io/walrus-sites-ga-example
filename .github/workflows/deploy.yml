@@ -136,24 +136,23 @@ jobs:
           PROVENANCE_PATH=".well-known/site-provenance.intoto.jsonl"
           REPORT_PATH=".well-known/verify-report.json"
 
-          # 예시: 첫 번째 파일 하나만 추출
-FILE=$(jq -r '.resources[0].path' "$MANIFEST_PATH")
-FILE_PATH="./build/${FILE#/}"
+          FILE=$(jq -r '.resources[0].path' "$MANIFEST_PATH")
+          FILE_PATH="./build/${FILE#/}"
 
-echo "🔍 Verifying single file: $FILE_PATH"
-OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
-  --provenance-path "$PROVENANCE_PATH" \
-  --source-uri github.com/zktx-io/walrus-sites-ga-example 2>&1)
-EXIT_CODE=$?
+          echo "🔍 Verifying single file: $FILE_PATH"
+          OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
+            --provenance-path "$PROVENANCE_PATH" \
+            --source-uri github.com/zktx-io/walrus-sites-ga-example 2>&1)
+          EXIT_CODE=$?
 
-echo "::group::🧾 slsa-verifier output"
-echo "$OUTPUT"
-echo "::endgroup::"
+          echo "::group::🧾 slsa-verifier output"
+          echo "$OUTPUT"
+          echo "::endgroup::"
 
-if [ $EXIT_CODE -ne 0 ]; then
-  echo "::error::❌ Verification failed for $FILE_PATH"
-  exit 1
-fi
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "::error::❌ Verification failed for $FILE_PATH"
+            exit 1
+          fi
 
       - name: Upload verification report
         uses: actions/upload-artifact@v4
