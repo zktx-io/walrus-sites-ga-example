@@ -171,6 +171,10 @@ jobs:
             BUILDER=$(echo "$OUTPUT" | grep "builder" | sed -E 's/.*builder (.*) at.*/\\1/')
             COMMIT=$(echo "$OUTPUT" | grep "commit" | sed -E 's/.*commit ([a-f0-9]{7,}).*/\\1/')
 
+            echo "🔍 Verifying $PASSED"
+            echo "🔍 Verifying $BUILDER"
+            echo "🔍 Verifying $COMMIT"
+
             if [ "$FIRST" = false ]; then
               echo "," >> "$REPORT_PATH"
             else
