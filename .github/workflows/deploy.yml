@@ -110,13 +110,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: site_manifest.json
-          path: .well-known
+          path: .artifact
 
       - name: Download provenance file
         uses: actions/download-artifact@v4
         with:
           name: site-provenance.intoto.jsonl
-          path: .well-known
+          path: .artifact
 
       - name: Download site output files
         uses: actions/download-artifact@v4
@@ -132,9 +132,9 @@ jobs:
 
       - name: Verify SLSA Provenance and Generate JSON Report
         run: |
-          MANIFEST_PATH=".well-known/site_manifest.json"
-          PROVENANCE_PATH=".well-known/site-provenance.intoto.jsonl"
-          REPORT_PATH=".well-known/verify-report.json"
+          MANIFEST_PATH=".artifact/site_manifest.json"
+          PROVENANCE_PATH=".artifact/site-provenance.intoto.jsonl"
+          REPORT_PATH=".artifact/verify-report.json"
 
           FILE=$(jq -r '.resources[0].path' "$MANIFEST_PATH")
           FILE_PATH="./build/${FILE#/}"
@@ -142,13 +142,16 @@ jobs:
           slsa-verifier version
 
           echo "1"
-          head -n 1 .well-known/site-provenance.intoto.jsonl | jq .
+          head -n 1 .artifact/site-provenance.intoto.jsonl \
+            | jq -r '.dsseEnvelope.payload' \
+            | base64 -d \
+            | jq -r '.subject[].name'
 
           echo "2"
-          head -n 1 .well-known/site-provenance.intoto.jsonl | jq -r '.dsseEnvelope.payload' | base64 -d | jq '.subject[].name'
+          head -n 1 .artifact/site-provenance.intoto.jsonl | jq -r '.dsseEnvelope.payload' | base64 -d | jq '.subject[].name'
 
           echo "3"
-          head -n 1 .well-known/site-provenance.intoto.jsonl | jq -r '.subject[].name'
+          head -n 1 .artifact/site-provenance.intoto.jsonl | jq -r '.subject[].name'
 
           echo "🔍 Verifying single file: $FILE_PATH"
           OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
@@ -169,4 +172,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: verify-report.json
-          path: ${{ needs.build-site.outputs.output_dir }}/.well-known/verify-report.json
+          path: verify-report.json
