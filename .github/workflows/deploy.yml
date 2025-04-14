@@ -154,10 +154,9 @@ jobs:
           head -n 1 .artifact/site-provenance.intoto.jsonl | jq -r '.subject[].name'
 
           echo "🔍 Verifying single file: $FILE_PATH"
-          OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
+          slsa-verifier verify-artifact "$FILE_PATH" \
             --provenance-path "$PROVENANCE_PATH" \
-            --source-uri github.com/zktx-io/walrus-sites-ga-example 2>&1)
-          EXIT_CODE=$?
+            --source-uri github.com/zktx-io/walrus-sites-ga-example
 
           echo "::group::🧾 slsa-verifier output"
           echo "$OUTPUT"
