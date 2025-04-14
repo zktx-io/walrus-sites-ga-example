@@ -146,6 +146,12 @@ jobs:
 
           sha256sum ./build/static/js/main.059e4ff7.js.map
 
+          echo "subject[].name"
+          head -n 1 .artifact/site-provenance.intoto.jsonl \
+          | jq -r '.dsseEnvelope.payload' \
+          | base64 -d \
+          | jq -r '.subject[].name'
+
           echo "🔍 Verifying single file: $FILE_PATH"
           slsa-verifier verify-artifact "$FILE_PATH" \
             --provenance-path "$PROVENANCE_PATH" \
