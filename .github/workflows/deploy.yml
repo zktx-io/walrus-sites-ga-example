@@ -142,7 +142,7 @@ jobs:
           FIRST=true
 
           for FILE in $FILES; do
-            FILE_PATH="${{ needs.build-site.outputs.output_dir }}/$FILE"
+            FILE_PATH="${{ needs.build-site.outputs.output_dir }}/${FILE#/}"
             if [ ! -f "$FILE_PATH" ]; then
               echo "❌ Missing file: $FILE"
               exit 1
