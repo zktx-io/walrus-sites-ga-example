@@ -136,6 +136,10 @@ jobs:
           PROVENANCE_PATH=".well-known/site-provenance.intoto.jsonl"
           REPORT_PATH=".well-known/verify-report.json"
 
+          slsa-verifier --help
+
+          slsa-verifier version
+
           echo "[" > "$REPORT_PATH"
 
           FILES=$(jq -r '.resources[] | .path' "$MANIFEST_PATH")
