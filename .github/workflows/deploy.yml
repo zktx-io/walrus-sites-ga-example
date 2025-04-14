@@ -141,6 +141,12 @@ jobs:
 
           slsa-verifier version
 
+          echo "1"
+          head -n 1 .well-known/site-provenance.intoto.jsonl | jq .
+
+          echo "2"
+          head -n 1 .well-known/site-provenance.intoto.jsonl | jq -r '.subject[].name'
+
           echo "🔍 Verifying single file: $FILE_PATH"
           OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
             --provenance-path "$PROVENANCE_PATH" \
