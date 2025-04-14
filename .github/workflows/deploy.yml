@@ -110,13 +110,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: site_manifest.json
-          path: ${{ needs.build-site.outputs.output_dir }}/.well-known
+          path: .well-known
 
       - name: Download provenance file
         uses: actions/download-artifact@v4
         with:
           name: site-provenance.intoto.jsonl
-          path: ${{ needs.build-site.outputs.output_dir }}/.well-known
+          path: .well-known
 
       - name: Download site output files
         uses: actions/download-artifact@v4
