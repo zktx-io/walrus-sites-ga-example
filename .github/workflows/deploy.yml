@@ -136,10 +136,6 @@ jobs:
           PROVENANCE_PATH=".well-known/site-provenance.intoto.jsonl"
           REPORT_PATH=".well-known/verify-report.json"
 
-          slsa-verifier --help
-
-          slsa-verifier version
-
           echo "[" > "$REPORT_PATH"
 
           FILES=$(jq -r '.resources[] | .path' "$MANIFEST_PATH")
@@ -153,7 +149,32 @@ jobs:
             fi
 
             echo "🔍 Verifying $FILE_PATH"
+            OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
+              --provenance-path "$PROVENANCE_PATH" \
+              --source-uri github.com/${{ github.repository }} 2>&1)
+            EXIT_CODE=$?
 
+            echo "::group::🧾 slsa-verifier output"
+            echo "$OUTPUT"
+            echo "::endgroup::"
+
+            if [ $EXIT_CODE -ne 0 ]; then
+              echo "::error::❌ Verification failed for $FILE_PATH"
+              exit 1
+            fi
+
+            if [ "$FIRST" = false ]; then
+              echo "," >> "$REPORT_PATH"
+            else
+              FIRST=false
+            fi
+
+            jq -n \
+              --arg file "$FILE" \
+              --argjson passed "$PASSED" \
+              --arg builder "$BUILDER" \
+              --arg commit "$COMMIT" \
+              '{ file: $file, passed: $passed, builder: $builder, commit: $commit }' >> "$REPORT_PATH"
           done
 
           echo "]" >> "$REPORT_PATH"
