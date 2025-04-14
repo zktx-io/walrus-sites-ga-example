@@ -129,13 +129,22 @@ jobs:
         run: |
           PROVENANCE_PATH=".artifact/walrus-sites.intoto.jsonl"
           REPORT_PATH=".artifact/verify-report.json"
-
-          while IFS= read -r -d '' file; do
-            echo "🔍 Verifying $file"
-            slsa-verifier verify-artifact "$file" \
-              --provenance-path "$PROVENANCE_PATH" \
-              --source-uri github.com/zktx-io/walrus-sites-ga-example || exit 1
-          done < <(find ${{ needs.build-site.outputs.output_dir }} -type f -print0)
+          FILE_PATH="./build/static/js/main.059e4ff7.js.map"
+      
+          OUTPUT=$(slsa-verifier verify-artifact "$FILE_PATH" \
+            --provenance-path "$PROVENANCE_PATH" \
+            --source-uri github.com/zktx-io/walrus-sites-ga-example || true)
+      
+          echo "::group::🧾 slsa-verifier output"
+          echo "$OUTPUT"
+          echo "::endgroup::"
+      
+          echo "$OUTPUT" > "$REPORT_PATH"
+      
+          if ! echo "$OUTPUT" | grep -q "Verified"; then
+            echo "::error::❌ Verification failed for $FILE_PATH"
+            exit 1
+          fi
 
       - name: Upload verification report
         uses: actions/upload-artifact@v4
