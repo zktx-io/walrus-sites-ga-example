@@ -97,7 +97,7 @@ jobs:
     with:
       base64-subjects: ${{ needs.build-site.outputs.base64_hashes }}
       upload-assets: false
-      provenance-name: 'walrus-sites-provenance.intoto.jsonl'
+      provenance-name: 'walrus-sites.intoto.jsonl'
     permissions:
       id-token: write
       contents: write
@@ -110,7 +110,7 @@ jobs:
       - name: Download provenance file
         uses: actions/download-artifact@v4
         with:
-          name: walrus-sites-provenance.intoto.jsonl
+          name: walrus-sites.intoto.jsonl
           path: .artifact
 
       - name: Download site output files
@@ -127,7 +127,7 @@ jobs:
 
       - name: Verify SLSA Provenance and Generate JSON Report
         run: |
-          PROVENANCE_PATH=".artifact/site-provenance.intoto.jsonl"
+          PROVENANCE_PATH=".artifact/walrus-sites.intoto.jsonl"
           REPORT_PATH=".artifact/verify-report.json"
           FILE_PATH="./build/static/js/main.059e4ff7.js.map"
 
