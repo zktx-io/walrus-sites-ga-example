@@ -136,23 +136,9 @@ jobs:
           PROVENANCE_PATH=".artifact/site-provenance.intoto.jsonl"
           REPORT_PATH=".artifact/verify-report.json"
 
-          FILE=$(jq -r '.resources[0].path' "$MANIFEST_PATH")
-          FILE_PATH="./build/${FILE#/}"
+          sha256sum ${ MANIFEST_PATH }
 
-          slsa-verifier version
-
-          jq '.resources[0].path' .artifact/site_manifest.json
-          ls -lR ./build/
-
-          sha256sum ./build/static/js/main.059e4ff7.js.map
-
-          echo "subject[].name"
-          head -n 1 .artifact/site-provenance.intoto.jsonl \
-          | jq -r '.dsseEnvelope.payload' \
-          | base64 -d \
-          | jq -r '.subject[].name'
-
-          echo "🔍 Verifying single file: $MANIFEST_PATH"
+          echo "🔍 Verifying site_manifest.json: $MANIFEST_PATH"
           slsa-verifier verify-artifact "$MANIFEST_PATH" \
             --provenance-path "$PROVENANCE_PATH" \
             --source-uri github.com/zktx-io/walrus-sites-ga-example
