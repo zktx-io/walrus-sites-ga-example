@@ -1,12 +1,17 @@
-# Walrus Sites Github Action Example
+# Walrus Sites GitHub Action Example
 
-## ⚠️ Walrus Sites GitHub Action Notice
+## Overview
 
-The legacy **Walrus Sites GA** is now deprecated.
+This is an **example site** built and deployed using the  
+**[official Walrus Sites workflow with SLSA-based provenance](https://docs.wal.app/walrus-sites/ci-cd.html)**.  
 
-Please use the new official workflow:  
-[`walrus-sites-provenance`](https://github.com/marketplace/actions/walrus-sites-provenance),  
-which supports both **Mainnet** and **Testnet** deployments with integrated SLSA provenance.
+It supports both **Mainnet** and **Testnet** deployments and demonstrates the  
+entire build → verification → deployment pipeline in action.
 
-👉 For setup and usage, visit:  
-https://github.com/zktx-io/walrus-sites-provenance
+---
+
+## Related Links
+
+- 📚 Official Workflow: [walrus-sites-provenance](https://github.com/zktx-io/walrus-sites-provenance)  
+- 🛡️ Provenance Verification: [View on Notary](https://notary.wal.app/site/workflow)  
+- 💻 Example Source: [walrus-sites-ga-example](https://github.com/zktx-io/walrus-sites-ga-example)

@@ -1,0 +1,21 @@
+{
+  "headers": {
+    "/index.html": {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "max-age=3500"
+    }
+  },
+  "routes": {
+    "/*": "/index.html"
+  },
+  "metadata": {
+    "link": "https://workflow.wal.app",
+    "image_url": "https://www.walrus.xyz/walrus-site",
+    "description": "An example Walrus site demonstrating provenance-enabled CI/CD using the site-builder.",
+    "project_url": "https://github.com/zktx-io/walrus-sites-ga-example/",
+    "creator": "zktx-io"
+  },
+  "site_name": "Provenance CI/CD Example with Site-Builder",
+  "object_id": "0xf37389acac9f55062d903ddb2d428be05e203e44668fc30123028905c32264d9",
+  "ignore": ["/private/*", "/secret.txt", "/images/tmp/*"]
+}
