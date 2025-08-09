@@ -1,9 +1,8 @@
 name: Update Walrus Site using Walrus Sites GA
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 permissions:
   id-token: write
@@ -14,7 +13,7 @@ jobs:
   deploy-with-provenance:
     uses: zktx-io/walrus-sites-ga/.github/workflows/deploy_with_slsa3.yml@v0.4.6
     with:
-      network: 'testnet'
+      network: 'mainnet'
       epochs: 5
       SUI_ADDRESS: ${{ vars.SUI_ADDRESS }}
     secrets:
