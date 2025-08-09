@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   deploy-with-provenance:
-    uses: zktx-io/walrus-sites-ga/.github/workflows/deploy_with_slsa3.yml@v0.4.5
+    uses: zktx-io/walrus-sites-ga/.github/workflows/deploy_with_slsa3.yml@v0.4.6
     with:
       network: 'testnet'
       epochs: 5
