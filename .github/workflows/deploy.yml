@@ -12,7 +12,10 @@ permissions:
 
 jobs:
   deploy-with-provenance:
-    uses: zktx-io/walrus-sites-ga/.github/workflows/deploy_with_slsa3.yml@v0.4.4
+    uses: zktx-io/walrus-sites-ga/.github/workflows/deploy_with_slsa3.yml@v0.4.5
     with:
       network: 'testnet'
       epochs: 5
+      SUI_ADDRESS: ${{ vars.SUI_ADDRESS }}
+    secrets:
+      SUI_KEYSTORE: ${{ secrets.SUI_KEYSTORE }}
